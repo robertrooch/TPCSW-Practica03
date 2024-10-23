@@ -4,6 +4,7 @@
 
 package org.uv.tpcsw.practica03;
 
+import java.util.List;
 import java.util.Set;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -33,7 +34,8 @@ public class TPCSWPractica03 {
         
 //        session.save(departamento);
         Departamento dep = session.get(Departamento.class,1L);
-//        
+//      
+        //Buscar por ID
         if (dep != null){
             System.out.println("Clave:" + dep.getClave()+" Nom:"+dep.getNombre());
             Set<Empleado> lstEmplado = dep.getEmpleados();
@@ -43,6 +45,29 @@ public class TPCSWPractica03 {
 //            empleado.setDepto(dep);
 //            session.save(empleado);
         }
+        
+        //Actualizar empleado
+        Empleado empleadoEncontrado = session.get(Empleado.class, empleado.getClave());
+        if (empleadoEncontrado != null) {
+            empleadoEncontrado.setNombre("David Actualizado");
+            session.update(empleadoEncontrado);
+            System.out.println("Empleado actualizado: " + empleadoEncontrado.getNombre());
+        }
+        
+        // ELIMINAR un empleado
+        if (empleadoEncontrado != null) {
+            session.delete(empleadoEncontrado);
+            System.out.println("Empleado eliminado: " + empleadoEncontrado.getNombre());
+        }
+        
+        // BUSCAR TODOS los empleados
+        List<Empleado> listaEmpleados = session.createQuery("from Empleado").list();
+        System.out.println("Lista de todos los empleados:");
+        for (Empleado emp : listaEmpleados) {
+            System.out.println("Nombre: " + emp.getNombre() + ", Teléfono: " + emp.getTelefono());
+        }
+        
+        
 //        
         t.commit();
     }
