@@ -219,68 +219,59 @@ public class DepartamentosGUI extends javax.swing.JInternalFrame {
 
     private void btoBuscarIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btoBuscarIdActionPerformed
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.openSession();  // Abrir una nueva sesión
+        Session session = sf.openSession(); 
         Transaction t = null;
 
         try {
-            t = session.beginTransaction();  // Iniciar la transacción
+            t = session.beginTransaction();  
 
-            // Convertir el texto a Long para la búsqueda
             Long clave = Long.valueOf(txtClave.getText());
-            Departamento dep = session.get(Departamento.class, clave);  // Buscar por clave primaria
+            Departamento dep = session.get(Departamento.class, clave); 
 
             if (dep != null) {
-                // Mostrar los datos del empleado en los campos de texto
                 txtClave.setText(String.valueOf(dep.getClave()));
                 txtNombre.setText(dep.getNombre());
             } else {
                 JOptionPane.showMessageDialog(this, "Departamento no encontrado.");
             }
 
-            t.commit();  // Confirmar la transacción
+            t.commit(); 
 
         } catch (Exception e) {
             if (t != null) {
-                t.rollback();  // Revertir la transacción en caso de error
+                t.rollback(); 
             }
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close();  
         }
     }//GEN-LAST:event_btoBuscarIdActionPerformed
 
     private void btonTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btonTodosActionPerformed
         try {
-            // Obtener todos los empleados usando el DAO
             DAODepartamento dao = new DAODepartamento();
             List<Departamento> lstdep = dao.findAll();
 
-            // Verificar si la lista es nula o vacía
             if (lstdep == null || lstdep.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "No hay departamentos registrados.");
                 return;
             }
 
-            // Crear el modelo para la tabla
             DefaultTableModel modelo = new DefaultTableModel();
             modelo.addColumn("Clave");
             modelo.addColumn("Nombre");
 
-            // Limpiar datos previos en la tabla (por si acaso)
             modelo.setRowCount(0);
 
-            // Agregar filas al modelo con los datos de empleados
             for (Departamento depa : lstdep) {
                 modelo.addRow(new Object[]{
                     depa.getClave(), depa.getNombre()
                 });
             }
 
-            // Establecer el modelo en la tabla
             jTable1.setModel(modelo);
 
         } catch (Exception e) {
-            // Capturar cualquier error y mostrarlo en un cuadro de diálogo
             JOptionPane.showMessageDialog(this, "Error al obtener empleados: " + e.getMessage());
         }
     }//GEN-LAST:event_btonTodosActionPerformed
@@ -291,52 +282,49 @@ public class DepartamentosGUI extends javax.swing.JInternalFrame {
 
     private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.openSession();  // Se recomienda abrir una nueva sesión.
+        Session session = sf.openSession(); 
         Transaction t = null;
 
         try {
-            t = session.beginTransaction();  // Inicia la transacción
+            t = session.beginTransaction(); 
 
             Long clave = Long.valueOf(txtClave.getText());
             Departamento departamentoEncontrado = session.get(Departamento.class, clave);
 
             if (departamentoEncontrado != null) {
-                session.delete(departamentoEncontrado);  // Eliminar el empleado
-                t.commit();  // Confirmar la transacción
+                session.delete(departamentoEncontrado); 
+                t.commit(); 
                 JOptionPane.showMessageDialog(this, "Departamento eliminado");
             } else {
                 JOptionPane.showMessageDialog(this, "Departamento no encontrado");
             }
         } catch (Exception e) {
             if (t != null) {
-                t.rollback();  // Revertir la transacción si hay un error
+                t.rollback(); 
             }
             JOptionPane.showMessageDialog(this, "Error al eliminar Departamento: " + e.getMessage());
         } finally {
-            session.close();  // Cerrar la sesión para liberar recursos
+            session.close(); 
         }
     }//GEN-LAST:event_btnBorrarActionPerformed
 
     private void btonActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btonActualizarActionPerformed
         // TODO add your handling code here:
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.openSession();  // Abrir una nueva sesión
+        Session session = sf.openSession();  
         Transaction t = null;
 
         try {
-            t = session.beginTransaction();  // Iniciar la transacción
+            t = session.beginTransaction(); 
 
-            // Obtener la clave del empleado desde el campo de texto
             Long clave = Long.valueOf(txtClave.getText());
 
-            // Buscar el empleado por su clave
             Departamento departamentoEncontrado = session.get(Departamento.class, clave);
             if (departamentoEncontrado != null) {
-                // Actualizar los datos del empleado
                 departamentoEncontrado.setNombre(txtNombre.getText());
 
-                session.update(departamentoEncontrado);  // Actualizar en la sesión
-                t.commit();  // Confirmar la transacción
+                session.update(departamentoEncontrado);  
+                t.commit();  
 
                 JOptionPane.showMessageDialog(this, "Departamento actualizado");
             } else {
@@ -344,11 +332,11 @@ public class DepartamentosGUI extends javax.swing.JInternalFrame {
             }
         } catch (Exception e) {
             if (t != null) {
-                t.rollback();  // Revertir la transacción en caso de error
+                t.rollback();  
             }
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         } finally {
-            session.close();  // Cerrar la sesión para liberar recursos
+            session.close();  
         }
     }//GEN-LAST:event_btonActualizarActionPerformed
 

@@ -239,10 +239,8 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
         if (departamentos != null) {
             for (Departamento dep : departamentos) {
-                // Guardar el ID y nombre en el mapa
                 departamentosMap.put(dep.getClave(), dep.getNombre());
 
-                // Agregar solo el nombre al JComboBox
                 cbxDepartamentos.addItem(dep.getNombre());
             }
         } else {
@@ -253,9 +251,8 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
     
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        String nombreSeleccionado = (String) cbxDepartamentos.getSelectedItem();  // Obtener el nombre seleccionado
+        String nombreSeleccionado = (String) cbxDepartamentos.getSelectedItem();  
 
-        // Buscar el ID correspondiente en el mapa
         Long departamentoId = null;
         for (Map.Entry<Long, String> entry : departamentosMap.entrySet()) {
             if (entry.getValue().equals(nombreSeleccionado)) {
@@ -266,14 +263,14 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
         if (departamentoId != null) {
             DAODepartamento daoDepartamento = new DAODepartamento();
-            Departamento departamento = daoDepartamento.findById(departamentoId);  // Buscar por ID
+            Departamento departamento = daoDepartamento.findById(departamentoId); 
 
             if (departamento != null) {
                 Empleado nuevoEmpleado = new Empleado();
                 nuevoEmpleado.setNombre(txtNombre.getText());
                 nuevoEmpleado.setDireccion(txtDIreccion.getText());
                 nuevoEmpleado.setTelefono(txtTelefono.getText());
-                nuevoEmpleado.setDepto(departamento);  // Asociar el departamento
+                nuevoEmpleado.setDepto(departamento);  
 
                 DAOEmpleado daoEmpleado = new DAOEmpleado();
                 if (daoEmpleado.save(nuevoEmpleado)) {
@@ -295,26 +292,21 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
     private void btoBuscarIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btoBuscarIdActionPerformed
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.openSession();  // Abrir nueva sesión
+        Session session = sf.openSession();  
         Transaction t = session.beginTransaction();
 
         try {
-            // Obtener la clave del empleado desde el campo de texto
             Long clave = Long.valueOf(txtClave.getText());
 
-            // Buscar el empleado por su ID (clave primaria)
             Empleado empleado = session.get(Empleado.class, clave);
 
             if (empleado != null) {
-                // Mostrar los datos del empleado en los campos de texto
                 txtNombre.setText(empleado.getNombre());
                 txtDIreccion.setText(empleado.getDireccion());
                 txtTelefono.setText(empleado.getTelefono());
 
-                // Obtener el departamento del empleado
                 Departamento departamento = empleado.getDepto();
                 if (departamento != null) {
-                    // Establecer la selección del JComboBox al departamento del empleado
                     cbxDepartamentos.setSelectedItem(departamentosMap.get(departamento.getClave()));
                 } else {
                     JOptionPane.showMessageDialog(this, "Departamento no encontrado.");
@@ -323,28 +315,27 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(this, "Empleado no encontrado.");
             }
 
-            t.commit();  // Confirmar la transacción
+            t.commit();  
         } catch (Exception e) {
             if (t != null) {
-                t.rollback();  // Revertir la transacción si hay un error
+                t.rollback();  
             }
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close();  
         }
     }//GEN-LAST:event_btoBuscarIdActionPerformed
 
     private void btonTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btonTodosActionPerformed
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.openSession();  // Abrir nueva sesión
+        Session session = sf.openSession();  
         Transaction t = session.beginTransaction();
 
         try {
-            // Obtener todos los empleados
+            
             DAOEmpleado daoEmpleado = new DAOEmpleado();
             List<Empleado> empleados = daoEmpleado.findAll();
 
-            // Crear el modelo para la tabla
             DefaultTableModel modelo = new DefaultTableModel();
             modelo.addColumn("Clave");
             modelo.addColumn("Nombre");
@@ -352,7 +343,6 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
             modelo.addColumn("Teléfono");
             modelo.addColumn("Departamento");
 
-            // Agregar los datos de los empleados al modelo
             for (Empleado emp : empleados) {
                 String nombreDepartamento = emp.getDepto() != null ? emp.getDepto().getNombre() : "Sin departamento";
                 modelo.addRow(new Object[]{
@@ -364,17 +354,16 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
                 });
             }
 
-            // Establecer el modelo en la tabla
             jTable1.setModel(modelo);
 
-            t.commit();  // Confirmar la transacción
+            t.commit();  
         } catch (Exception e) {
             if (t != null) {
-                t.rollback();  // Revertir la transacción en caso de error
+                t.rollback();  
             }
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close(); 
         }
     }//GEN-LAST:event_btonTodosActionPerformed
 
@@ -384,54 +373,51 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
     private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.openSession();  // Se recomienda abrir una nueva sesión.
+        Session session = sf.openSession();  
         Transaction t = null;
 
         try {
-            t = session.beginTransaction();  // Inicia la transacción
+            t = session.beginTransaction(); 
 
             Long clave = Long.valueOf(txtClave.getText());
             Empleado empleadoEncontrado = session.get(Empleado.class, clave);
 
             if (empleadoEncontrado != null) {
-                session.delete(empleadoEncontrado);  // Eliminar el empleado
-                t.commit();  // Confirmar la transacción
+                session.delete(empleadoEncontrado);  
+                t.commit();  
                 JOptionPane.showMessageDialog(this, "Empleado eliminado");
             } else {
                 JOptionPane.showMessageDialog(this, "Empleado no encontrado");
             }
         } catch (Exception e) {
             if (t != null) {
-                t.rollback();  // Revertir la transacción si hay un error
+                t.rollback();  
             }
             JOptionPane.showMessageDialog(this, "Error al eliminar empleado: " + e.getMessage());
         } finally {
-            session.close();  // Cerrar la sesión para liberar recursos
+            session.close();  
         }
     }//GEN-LAST:event_btnBorrarActionPerformed
 
     private void btonActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btonActualizarActionPerformed
         // TODO add your handling code here:
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.openSession();  // Abrir una nueva sesión
+        Session session = sf.openSession();  
         Transaction t = null;
 
         try {
-            t = session.beginTransaction();  // Iniciar la transacción
+            t = session.beginTransaction();  
 
-            // Obtener la clave del empleado desde el campo de texto
             Long clave = Long.valueOf(txtClave.getText());
 
-            // Buscar el empleado por su clave
             Empleado empleadoEncontrado = session.get(Empleado.class, clave);
             if (empleadoEncontrado != null) {
-                // Actualizar los datos del empleado
                 empleadoEncontrado.setNombre(txtNombre.getText());
                 empleadoEncontrado.setDireccion(txtDIreccion.getText());
                 empleadoEncontrado.setTelefono(txtTelefono.getText());
 
-                session.update(empleadoEncontrado);  // Actualizar en la sesión
-                t.commit();  // Confirmar la transacción
+                session.update(empleadoEncontrado);  
+                t.commit();  
 
                 JOptionPane.showMessageDialog(this, "Empleado actualizado");
             } else {
@@ -439,11 +425,11 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
             }
         } catch (Exception e) {
             if (t != null) {
-                t.rollback();  // Revertir la transacción en caso de error
+                t.rollback();  
             }
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         } finally {
-            session.close();  // Cerrar la sesión para liberar recursos
+            session.close();  
         }
     }//GEN-LAST:event_btonActualizarActionPerformed
 

@@ -19,20 +19,20 @@ public class DAODepartamento implements IDAOGeneral<Departamento,Long> {
     @Override
     public boolean save(Departamento pojo) {
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.openSession();  // Abrimos una nueva sesión
-        Transaction t = session.beginTransaction();  // Iniciamos la transacción
+        Session session = sf.openSession();
+        Transaction t = session.beginTransaction();
         try {
             session.save(pojo);
-            t.commit();  // Confirmamos la transacción
+            t.commit();
             return true;
         } catch (Exception e) {
             if (t != null) {
-                t.rollback();  // Revertimos en caso de error
+                t.rollback();
             }
             e.printStackTrace();
             return false;
         } finally {
-            session.close();  // Cerramos la sesión
+            session.close();
         }
     }
 
