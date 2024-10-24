@@ -21,18 +21,18 @@ public class TPCSWPractica03 {
         
         Empleado empleado = new Empleado();
         //empleado.setClave(10);
-        empleado.setNombre("David");
+        empleado.setNombre("David2");
         empleado.setDireccion("Av 2");
         empleado.setTelefono("282");
 
-//        Departamento departamento = new Departamento();
-//        departamento.setNombre("Administricacion");
+        Departamento departamento = new Departamento();
+        departamento.setNombre("Administricacion");
         
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.getCurrentSession();
         Transaction t=session.beginTransaction();
         
-//        session.save(departamento);
+        session.save(empleado);
         Departamento dep = session.get(Departamento.class,1L);
 //      
         //Buscar por ID
@@ -55,11 +55,11 @@ public class TPCSWPractica03 {
         }
         
         // ELIMINAR un empleado
-        if (empleadoEncontrado != null) {
+        //if (empleadoEncontrado != null) {
             session.delete(empleadoEncontrado);
             System.out.println("Empleado eliminado: " + empleadoEncontrado.getNombre());
-        }
-        
+        //}
+//        
         // BUSCAR TODOS los empleados
         List<Empleado> listaEmpleados = session.createQuery("from Empleado").list();
         System.out.println("Lista de todos los empleados:");
