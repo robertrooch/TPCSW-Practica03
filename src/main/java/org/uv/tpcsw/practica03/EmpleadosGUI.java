@@ -28,6 +28,11 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
      * Creates new form EmpleadosGUI
      */
     public EmpleadosGUI() {
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session session = sf.openSession();  
+        Transaction t = session.beginTransaction();
+        
+        
         initComponents();
         cargarDepartamentos();
         cargarTabla();
@@ -45,6 +50,13 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
                         txtTelefono.setEnabled(true);
                         txtDireccion.setText(jTable1.getValueAt(jTable1.getSelectedRow(), 2).toString());
                         txtDireccion.setEnabled(true);
+                        cbxDepartamentos.setEnabled(true);
+                        
+                        Long clave = Long.valueOf(jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString());
+                        Empleado empleado = session.get(Empleado.class, clave);
+                        Departamento departamento = empleado.getDepto();
+                        cbxDepartamentos.setSelectedItem(departamentosMap.get(departamento.getClave()));
+                        
                         btnActualizar.setEnabled(true);
                         
                     }
@@ -76,7 +88,6 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         btnBuscarId = new javax.swing.JButton();
         btnTodos = new javax.swing.JButton();
         btnBorrar = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         btnActualizar = new javax.swing.JButton();
@@ -99,6 +110,7 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
         jLabel4.setText("Telefono:");
 
+        txtClave.setEnabled(false);
         txtClave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtClaveActionPerformed(evt);
@@ -117,6 +129,7 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         txtTelefono.setEnabled(false);
 
         btnGuardar.setText("Guardar");
+        btnGuardar.setEnabled(false);
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGuardarActionPerformed(evt);
@@ -137,6 +150,7 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         jScrollPane1.setViewportView(jTable1);
 
         btnBuscarId.setText("Buscar");
+        btnBuscarId.setEnabled(false);
         btnBuscarId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBuscarIdActionPerformed(evt);
@@ -151,19 +165,19 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         });
 
         btnBorrar.setText("Borrar");
+        btnBorrar.setEnabled(false);
         btnBorrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBorrarActionPerformed(evt);
             }
         });
 
-        jLabel5.setText("Nuevo Empleado");
-
         jLabel6.setText("Buscar o borrar empleado");
 
         jLabel7.setText("Buscar todos los empleados");
 
         btnActualizar.setText("Actualizar");
+        btnActualizar.setEnabled(false);
         btnActualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnActualizarActionPerformed(evt);
@@ -171,12 +185,18 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         });
 
         cbxDepartamentos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--vacio--" }));
+        cbxDepartamentos.setEnabled(false);
 
         jLabel8.setText("Departamento:");
 
         jLabel9.setText("Seleccione una accion a realizar");
 
         btnNuevo.setText("Nuevo empleado");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
 
         btnBuscarID.setText("Buscar por ID");
         btnBuscarID.addActionListener(new java.awt.event.ActionListener() {
@@ -186,64 +206,19 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         });
 
         btnBorrarID.setText("Borrar por ID");
+        btnBorrarID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBorrarIDActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel4)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
-                            .addComponent(jLabel8))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(btnGuardar)
-                                                .addGap(137, 137, 137)
-                                                .addComponent(jLabel1))
-                                            .addComponent(btnActualizar))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(btnBuscarId)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(btnBorrar))))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(cbxDepartamentos, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)))
-                                .addGap(0, 137, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel6)
-                                .addGap(216, 216, 216))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 631, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel9)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnNuevo)
                         .addGap(43, 43, 43)
@@ -252,7 +227,49 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
                         .addComponent(btnBorrarID)
                         .addGap(43, 43, 43)
                         .addComponent(btnTodos)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(28, 28, 28)
+                                    .addComponent(jLabel1)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(btnBuscarId)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(btnBorrar))))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addComponent(jLabel6)
+                                    .addGap(79, 79, 79)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel7)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 631, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel9)))
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jLabel8))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnGuardar)
+                            .addComponent(btnActualizar)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(cbxDepartamentos, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(79, 498, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -265,36 +282,40 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
                     .addComponent(btnTodos)
                     .addComponent(btnBuscarID)
                     .addComponent(btnBorrarID))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1)
-                    .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnGuardar))
-                .addGap(13, 13, 13)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(btnBuscarId)
-                    .addComponent(btnBorrar)
-                    .addComponent(btnActualizar))
-                .addGap(9, 9, 9)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2)
+                            .addComponent(btnGuardar))
+                        .addGap(13, 13, 13)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)
+                            .addComponent(btnActualizar))
+                        .addGap(9, 9, 9)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(13, 13, 13)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnBuscarId)
+                            .addComponent(btnBorrar))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbxDepartamentos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
-                .addGap(51, 51, 51)
+                .addGap(33, 33, 33)
                 .addComponent(jLabel7)
-                .addGap(35, 35, 35)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -359,6 +380,20 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
                 DAOEmpleado daoEmpleado = new DAOEmpleado();
                 if (daoEmpleado.save(nuevoEmpleado)) {
+                    txtNombre.setEnabled(false);
+                    txtNombre.setText("");
+
+                    txtDireccion.setEnabled(false);
+                    txtDireccion.setText("");
+
+                    txtTelefono.setEnabled(false);
+                    txtTelefono.setText("");
+                    
+                    txtClave.setEnabled(false);
+                    txtClave.setText("");
+                    cbxDepartamentos.setEnabled(false);
+                    btnGuardar.setEnabled(false);
+                    btnBuscarId.setEnabled(false);
                     JOptionPane.showMessageDialog(this, "Empleado guardado con éxito.");
                 } else {
                     JOptionPane.showMessageDialog(this, "Error al guardar el empleado.");
@@ -383,6 +418,18 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         try {
             Long clave = Long.valueOf(txtClave.getText());
 
+            txtNombre.setEnabled(true);
+            txtNombre.setText("");
+
+            txtDireccion.setEnabled(true);
+            txtDireccion.setText("");
+
+            txtTelefono.setEnabled(true);
+            txtTelefono.setText("");
+
+            cbxDepartamentos.setEnabled(true);
+            btnGuardar.setEnabled(false);
+            btnActualizar.setEnabled(true);
             Empleado empleado = session.get(Empleado.class, clave);
 
             if (empleado != null) {
@@ -417,6 +464,25 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         Transaction t = session.beginTransaction();
 
         try {
+            txtClave.setText("");
+            txtClave.setEnabled(false);
+
+            btnActualizar.setEnabled(false);
+
+            txtNombre.setEnabled(false);
+            txtNombre.setText("");
+
+            txtDireccion.setEnabled(false);
+            txtDireccion.setText("");
+
+            txtTelefono.setEnabled(false);
+            txtTelefono.setText("");
+
+            cbxDepartamentos.setEnabled(false);
+            btnGuardar.setEnabled(false);
+            btnBuscarId.setEnabled(false);
+            btnBorrar.setEnabled(false);
+            
             
             DAOEmpleado daoEmpleado = new DAOEmpleado();
             List<Empleado> empleados = daoEmpleado.findAll();
@@ -491,19 +557,54 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         Transaction t = null;
 
         try {
-            t = session.beginTransaction();  
+            t = session.beginTransaction();
+            String nombreSeleccionado = (String) cbxDepartamentos.getSelectedItem();
+
+            if (nombreSeleccionado.equals("--vacio--")) {
+                JOptionPane.showMessageDialog(this, "Falta seleccionar un departamento.",
+                        "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            Long departamentoId = null;
+            for (Map.Entry<Long, String> entry : departamentosMap.entrySet()) {
+                if (entry.getValue().equals(nombreSeleccionado)) {
+                    departamentoId = entry.getKey();
+                    break;
+                }
+            }
+            
+            DAODepartamento daoDepartamento = new DAODepartamento();
+            Departamento departamento = daoDepartamento.findById(departamentoId);
 
             Long clave = Long.valueOf(txtClave.getText());
 
             Empleado empleadoEncontrado = session.get(Empleado.class, clave);
-            if (empleadoEncontrado != null) {
+            if (empleadoEncontrado != null && departamento != null) {
                 empleadoEncontrado.setNombre(txtNombre.getText());
                 empleadoEncontrado.setDireccion(txtDireccion.getText());
                 empleadoEncontrado.setTelefono(txtTelefono.getText());
+                empleadoEncontrado.setDepto(departamento);
 
-                session.update(empleadoEncontrado);  
-                t.commit();  
 
+                session.update(empleadoEncontrado);
+                t.commit();
+                txtNombre.setEnabled(false);
+                txtNombre.setText("");
+
+                txtDireccion.setEnabled(false);
+                txtDireccion.setText("");
+
+                txtTelefono.setEnabled(false);
+                txtTelefono.setText("");
+                btnGuardar.setEnabled(false);
+                
+                txtClave.setEnabled(false);
+                txtClave.setText("");
+                btnBuscarId.setEnabled(false);
+                
+                cbxDepartamentos.setEnabled(false);
+                btnActualizar.setEnabled(false);
                 JOptionPane.showMessageDialog(this, "Empleado actualizado");
             } else {
                 JOptionPane.showMessageDialog(this, "Empleado no encontrado");
@@ -520,7 +621,71 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
     private void btnBuscarIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarIDActionPerformed
         // TODO add your handling code here:
+        txtClave.setText("");
+        txtClave.setEnabled(true);
+        btnBuscarId.setEnabled(true);
+        btnActualizar.setEnabled(false);
+        
+        txtNombre.setEnabled(false);
+        txtNombre.setText("");
+        
+        txtDireccion.setEnabled(false);
+        txtDireccion.setText("");
+        
+        txtTelefono.setEnabled(false);
+        txtTelefono.setText("");
+        
+        cbxDepartamentos.setEnabled(false);
+        btnGuardar.setEnabled(false);
+        
+        btnBorrar.setEnabled(false);
+        cargarTabla();
     }//GEN-LAST:event_btnBuscarIDActionPerformed
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        txtNombre.setEnabled(true);
+        txtNombre.setText("");
+        
+        txtDireccion.setEnabled(true);
+        txtDireccion.setText("");
+        
+        txtTelefono.setEnabled(true);
+        txtTelefono.setText("");
+        
+        btnGuardar.setEnabled(true);
+        
+        txtClave.setText("");
+        txtClave.setEnabled(false);
+        
+        cbxDepartamentos.setEnabled(true);
+        btnActualizar.setEnabled(false);
+        
+        btnBuscarId.setEnabled(false);        
+        btnBorrar.setEnabled(false);
+        cargarTabla();
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnBorrarIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarIDActionPerformed
+        // TODO add your handling code here:
+        txtClave.setText("");
+        txtClave.setEnabled(true);
+        btnBorrar.setEnabled(true);
+        
+        txtNombre.setEnabled(false);
+        txtNombre.setText("");
+        
+        txtDireccion.setEnabled(false);
+        txtDireccion.setText("");
+        
+        txtTelefono.setEnabled(false);
+        txtTelefono.setText("");
+        
+        cbxDepartamentos.setEnabled(false);
+        btnGuardar.setEnabled(false);
+        btnBuscarId.setEnabled(false);
+        btnActualizar.setEnabled(false);
+        cargarTabla();
+    }//GEN-LAST:event_btnBorrarIDActionPerformed
 
     private Map<Long, String> departamentosMap = new HashMap<>();
 
@@ -538,7 +703,6 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
