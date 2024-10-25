@@ -4,11 +4,15 @@
  */
 package org.uv.tpcsw.practica03;
 
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -26,6 +30,26 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
     public EmpleadosGUI() {
         initComponents();
         cargarDepartamentos();
+        cargarTabla();
+        jTable1.addMouseListener(new MouseAdapter(){
+            public void mousePressed(MouseEvent Mouse_evt)
+                {
+                    JTable table = (JTable) Mouse_evt.getSource();
+                    Point point = Mouse_evt.getPoint();
+                    int row = table.rowAtPoint(point);
+                    if(Mouse_evt.getClickCount() == 1){
+                        txtNombre.setText(jTable1.getValueAt(jTable1.getSelectedRow(), 1).toString());
+                        txtNombre.setEnabled(true);
+                        txtClave.setText(jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString());
+                        txtTelefono.setText(jTable1.getValueAt(jTable1.getSelectedRow(), 3).toString());
+                        txtTelefono.setEnabled(true);
+                        txtDireccion.setText(jTable1.getValueAt(jTable1.getSelectedRow(), 2).toString());
+                        txtDireccion.setEnabled(true);
+                        btnActualizar.setEnabled(true);
+                        
+                    }
+                }
+        });
     }
     
 
@@ -44,20 +68,24 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         txtClave = new javax.swing.JTextField();
         txtNombre = new javax.swing.JTextField();
-        txtDIreccion = new javax.swing.JTextField();
+        txtDireccion = new javax.swing.JTextField();
         txtTelefono = new javax.swing.JTextField();
         btnGuardar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        btoBuscarId = new javax.swing.JButton();
-        btonTodos = new javax.swing.JButton();
+        btnBuscarId = new javax.swing.JButton();
+        btnTodos = new javax.swing.JButton();
         btnBorrar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        btonActualizar = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
         cbxDepartamentos = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        btnNuevo = new javax.swing.JButton();
+        btnBuscarID = new javax.swing.JButton();
+        btnBorrarID = new javax.swing.JButton();
 
         setClosable(true);
         setMinimumSize(new java.awt.Dimension(700, 400));
@@ -77,11 +105,16 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
             }
         });
 
+        txtNombre.setEnabled(false);
         txtNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNombreActionPerformed(evt);
             }
         });
+
+        txtDireccion.setEnabled(false);
+
+        txtTelefono.setEnabled(false);
 
         btnGuardar.setText("Guardar");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
@@ -103,17 +136,17 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        btoBuscarId.setText("Buscar");
-        btoBuscarId.addActionListener(new java.awt.event.ActionListener() {
+        btnBuscarId.setText("Buscar");
+        btnBuscarId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btoBuscarIdActionPerformed(evt);
+                btnBuscarIdActionPerformed(evt);
             }
         });
 
-        btonTodos.setText("Buscar Todos");
-        btonTodos.addActionListener(new java.awt.event.ActionListener() {
+        btnTodos.setText("Buscar Todos");
+        btnTodos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btonTodosActionPerformed(evt);
+                btnTodosActionPerformed(evt);
             }
         });
 
@@ -130,14 +163,29 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
         jLabel7.setText("Buscar todos los empleados");
 
-        btonActualizar.setText("Actualizar");
-        btonActualizar.addActionListener(new java.awt.event.ActionListener() {
+        btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btonActualizarActionPerformed(evt);
+                btnActualizarActionPerformed(evt);
             }
         });
 
+        cbxDepartamentos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--vacio--" }));
+
         jLabel8.setText("Departamento:");
+
+        jLabel9.setText("Seleccione una accion a realizar");
+
+        btnNuevo.setText("Nuevo empleado");
+
+        btnBuscarID.setText("Buscar por ID");
+        btnBuscarID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarIDActionPerformed(evt);
+            }
+        });
+
+        btnBorrarID.setText("Borrar por ID");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -161,25 +209,25 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(txtDIreccion, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGap(18, 18, 18)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(layout.createSequentialGroup()
                                                 .addComponent(btnGuardar)
                                                 .addGap(137, 137, 137)
                                                 .addComponent(jLabel1))
-                                            .addComponent(btonActualizar))
+                                            .addComponent(btnActualizar))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGroup(layout.createSequentialGroup()
-                                                .addComponent(btoBuscarId)
+                                                .addComponent(btnBuscarId)
                                                 .addGap(18, 18, 18)
                                                 .addComponent(btnBorrar))))
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(cbxDepartamentos, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)))
-                                .addGap(0, 215, Short.MAX_VALUE))
+                                .addGap(0, 137, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel6)
@@ -187,15 +235,37 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btonTodos)
                             .addComponent(jLabel7)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 631, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnNuevo)
+                        .addGap(43, 43, 43)
+                        .addComponent(btnBuscarID)
+                        .addGap(48, 48, 48)
+                        .addComponent(btnBorrarID)
+                        .addGap(43, 43, 43)
+                        .addComponent(btnTodos)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(33, Short.MAX_VALUE)
+                .addGap(25, 25, 25)
+                .addComponent(jLabel9)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNuevo)
+                    .addComponent(btnTodos)
+                    .addComponent(btnBuscarID)
+                    .addComponent(btnBorrarID))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jLabel6))
@@ -208,11 +278,11 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
                     .addComponent(btnGuardar))
                 .addGap(13, 13, 13)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtDIreccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(btoBuscarId)
+                    .addComponent(btnBuscarId)
                     .addComponent(btnBorrar)
-                    .addComponent(btonActualizar))
+                    .addComponent(btnActualizar))
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -223,9 +293,7 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
                     .addComponent(jLabel8))
                 .addGap(51, 51, 51)
                 .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btonTodos)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(35, 35, 35)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -247,11 +315,28 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "No se encontraron departamentos.");
         }
     }
+    
+    private void cargarTabla(){
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("Clave");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Dirección");
+        modelo.addColumn("Teléfono");
+        modelo.addColumn("Departamento");
+        
+        jTable1.setModel(modelo);
+    }
 
 
     
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        String nombreSeleccionado = (String) cbxDepartamentos.getSelectedItem();  
+        String nombreSeleccionado = (String) cbxDepartamentos.getSelectedItem();
+
+        if (nombreSeleccionado.equals("--vacio--")) {
+            JOptionPane.showMessageDialog(this, "Falta seleccionar un departamento.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         Long departamentoId = null;
         for (Map.Entry<Long, String> entry : departamentosMap.entrySet()) {
@@ -263,14 +348,14 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
         if (departamentoId != null) {
             DAODepartamento daoDepartamento = new DAODepartamento();
-            Departamento departamento = daoDepartamento.findById(departamentoId); 
+            Departamento departamento = daoDepartamento.findById(departamentoId);
 
             if (departamento != null) {
                 Empleado nuevoEmpleado = new Empleado();
                 nuevoEmpleado.setNombre(txtNombre.getText());
-                nuevoEmpleado.setDireccion(txtDIreccion.getText());
+                nuevoEmpleado.setDireccion(txtDireccion.getText());
                 nuevoEmpleado.setTelefono(txtTelefono.getText());
-                nuevoEmpleado.setDepto(departamento);  
+                nuevoEmpleado.setDepto(departamento);
 
                 DAOEmpleado daoEmpleado = new DAOEmpleado();
                 if (daoEmpleado.save(nuevoEmpleado)) {
@@ -290,7 +375,7 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreActionPerformed
 
-    private void btoBuscarIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btoBuscarIdActionPerformed
+    private void btnBuscarIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarIdActionPerformed
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.openSession();  
         Transaction t = session.beginTransaction();
@@ -302,7 +387,7 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
 
             if (empleado != null) {
                 txtNombre.setText(empleado.getNombre());
-                txtDIreccion.setText(empleado.getDireccion());
+                txtDireccion.setText(empleado.getDireccion());
                 txtTelefono.setText(empleado.getTelefono());
 
                 Departamento departamento = empleado.getDepto();
@@ -320,13 +405,13 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
             if (t != null) {
                 t.rollback();  
             }
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error en el campo de clave");
         } finally {
             session.close();  
         }
-    }//GEN-LAST:event_btoBuscarIdActionPerformed
+    }//GEN-LAST:event_btnBuscarIdActionPerformed
 
-    private void btonTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btonTodosActionPerformed
+    private void btnTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTodosActionPerformed
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.openSession();  
         Transaction t = session.beginTransaction();
@@ -365,7 +450,7 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         } finally {
             session.close(); 
         }
-    }//GEN-LAST:event_btonTodosActionPerformed
+    }//GEN-LAST:event_btnTodosActionPerformed
 
     private void txtClaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtClaveActionPerformed
         // TODO add your handling code here:
@@ -399,7 +484,7 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnBorrarActionPerformed
 
-    private void btonActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btonActualizarActionPerformed
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
         // TODO add your handling code here:
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.openSession();  
@@ -413,7 +498,7 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
             Empleado empleadoEncontrado = session.get(Empleado.class, clave);
             if (empleadoEncontrado != null) {
                 empleadoEncontrado.setNombre(txtNombre.getText());
-                empleadoEncontrado.setDireccion(txtDIreccion.getText());
+                empleadoEncontrado.setDireccion(txtDireccion.getText());
                 empleadoEncontrado.setTelefono(txtTelefono.getText());
 
                 session.update(empleadoEncontrado);  
@@ -431,16 +516,23 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
         } finally {
             session.close();  
         }
-    }//GEN-LAST:event_btonActualizarActionPerformed
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void btnBuscarIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarIDActionPerformed
 
     private Map<Long, String> departamentosMap = new HashMap<>();
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnBorrar;
+    private javax.swing.JButton btnBorrarID;
+    private javax.swing.JButton btnBuscarID;
+    private javax.swing.JButton btnBuscarId;
     private javax.swing.JButton btnGuardar;
-    private javax.swing.JButton btoBuscarId;
-    private javax.swing.JButton btonActualizar;
-    private javax.swing.JButton btonTodos;
+    private javax.swing.JButton btnNuevo;
+    private javax.swing.JButton btnTodos;
     private javax.swing.JComboBox<String> cbxDepartamentos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -450,10 +542,11 @@ public class EmpleadosGUI extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField txtClave;
-    private javax.swing.JTextField txtDIreccion;
+    private javax.swing.JTextField txtDireccion;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
